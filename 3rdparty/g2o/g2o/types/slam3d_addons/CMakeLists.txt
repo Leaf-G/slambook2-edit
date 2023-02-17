@@ -19,12 +19,16 @@ add_library(types_slam3d_addons ${G2O_LIB_TYPE}
 
 set_target_properties(types_slam3d_addons PROPERTIES OUTPUT_NAME ${LIB_PREFIX}types_slam3d_addons)
 if (APPLE)
-  set_target_properties(types_slam3d_addons PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+  set_target_properties(types_slam3d_addons PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()
 target_link_libraries(types_slam3d_addons types_slam3d core)
 if(G2O_HAVE_OPENGL)
-  target_link_libraries(types_slam3d_addons ${OPENGL_gl_LIBRARY} )
+  target_link_libraries(types_slam3d_addons opengl_helper)
 endif()
+
+target_include_directories(types_slam3d_addons PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include/g2o/types/slam3d_addons>)
 
 install(TARGETS types_slam3d_addons
   EXPORT ${G2O_TARGETS_EXPORT_NAME}
