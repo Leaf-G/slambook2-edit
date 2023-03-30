@@ -12,6 +12,8 @@
 #include <cmath>
 #include <chrono>
 
+//#include "output_container.h"
+
 using namespace std;
 
 // 曲线模型的顶点，模板参数：优化变量维度和数据类型
@@ -80,6 +82,9 @@ int main(int argc, char **argv) {
     double x = i / 100.0;
     x_data.push_back(x);
     y_data.push_back(exp(ar * x * x + br * x + cr) + rng.gaussian(w_sigma * w_sigma));
+//    std::cout << x_data.back() << std::endl;
+//    std::cout << y_data.back() << std::endl;
+
   }
 
   // 构建图优化，先设定g2o

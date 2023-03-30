@@ -14,7 +14,8 @@ Find_Package(Sophus REQUIRED)
 Find_Package(CSparse REQUIRED)
 # set(FMT_LIBRARIES fmt::fmt)
 
-SET(G2O_LIBS g2o_csparse_extension g2o_stuff g2o_core cxsparse)
+# SET(G2O_LIBS g2o_csparse_extension g2o_stuff g2o_core cxsparse)
+SET(G2O_LIBS g2o_csparse_extension g2o_stuff g2o_core g2o_solver_csparse cxsparse)
 
 include_directories(${PROJECT_SOURCE_DIR} ${EIGEN3_INCLUDE_DIR} ${CSPARSE_INCLUDE_DIR})
 
