@@ -6,10 +6,15 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "-std=c++14 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE  "-std=c++14 -O3 -fopenmp -pthread")
 
+
+
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+
+set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
+set(CMAKE_CUDA_ARCHITECTURES 86)
 ############### dependencies ######################
 # Eigen
 include_directories("/usr/include/eigen3")
@@ -45,6 +50,29 @@ include_directories(${GFLAGS_INCLUDE_DIRS})
 # csparse
 find_package(CSparse REQUIRED)
 include_directories(${CSPARSE_INCLUDE_DIR})
+
+### OpenMP
+find_package(OpenMP)
+include_directories(${OpenMP_INCLUDE_DIRS})
+###
+
+### Torchlib
+# set(Torch_DIR /home/)
+find_package(Torch REQUIRED PATHS ${PROJECT_SOURCE_DIR}/libtorch)
+message(STATUS "Found Torch include is ${TORCH_INCLUDE_DIRS}")
+include_directories(${TORCH_INCLUDE_DIRS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
+###
+
+# the library that only has the cuda code
+cuda_add_library(get_patches_cuda SHARED src/get_patches.cu)
+set_target_properties(get_patches_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+add_library(get_patches SHARED src/get_patches.cpp)
+target_link_libraries(get_patches get_patches_cuda)
+
+include_directories(include)
 
 set(THIRD_PARTY_LIBS
         ${OpenCV_LIBS}

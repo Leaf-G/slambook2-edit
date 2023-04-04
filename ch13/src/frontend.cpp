@@ -13,6 +13,8 @@
 #include "myslam/map.h"
 #include "myslam/viewer.h"
 
+#include "myslam/alike.hpp"
+#include "myslam/utils.h"
 namespace myslam {
 
 Frontend::Frontend() {
@@ -296,7 +298,21 @@ int Frontend::DetectFeatures() {
     }
 
     std::vector<cv::KeyPoint> keypoints;
-    gftt_->detect(current_frame_->left_img_, keypoints, mask);
+
+    auto alike = alike::ALIKE("../models/alike-t.pt", true, 2, 500, 0.1, 9999, false);
+    torch::Tensor score_map, descriptor_map;
+    torch::Tensor keypoints_t, dispersitys_t, kptscores_t, descriptors_t;
+    cv::Mat descriptors;
+    cv::Mat img_rgb;
+    cv::cvtColor(current_frame_->left_img_, img_rgb, cv::COLOR_BGR2RGB);
+    auto img_tensor = alike::mat2Tensor(current_frame_->left_img_).permute({2, 0, 1}).unsqueeze(0).to(torch::kCUDA).to(torch::kFloat) / 255;
+    alike.extract(img_tensor,score_map,descriptor_map);
+    alike.detectAndCompute(score_map, descriptor_map, keypoints_t, dispersitys_t, kptscores_t, descriptors_t);
+    alike.toOpenCVFormat(keypoints_t, dispersitys_t, kptscores_t, descriptors_t, keypoints, descriptors);
+
+
+
+//    gftt_->detect(current_frame_->left_img_, keypoints, mask);
     int cnt_detected = 0;
     for (auto &kp : keypoints) {
         current_frame_->features_left_.push_back(

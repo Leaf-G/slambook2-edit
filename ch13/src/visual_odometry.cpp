@@ -19,7 +19,7 @@ bool VisualOdometry::Init() {
     dataset_ =
         Dataset::Ptr(new Dataset(Config::Get<std::string>("dataset_dir")));
     CHECK_EQ(dataset_->Init(), true);
-
+    Dataset::Ptr (new Dataset(Config::Get<std::string>("use_cuda")));
     // create components and links
     frontend_ = Frontend::Ptr(new Frontend);
     backend_ = Backend::Ptr(new Backend);
