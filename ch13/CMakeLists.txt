@@ -3,6 +3,8 @@ project(myslam)
 
 set(CMAKE_BUILD_TYPE Release)
 
+add_definitions("-Wall -g")
+
 set(CMAKE_CXX_FLAGS "-std=c++14 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE  "-std=c++14 -O3 -fopenmp -pthread")
 
